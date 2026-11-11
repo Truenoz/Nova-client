@@ -1,1 +1,0 @@
-Acá se guardan los nova-client-<version>.jar que compila el workflow.
