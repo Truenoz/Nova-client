@@ -669,8 +669,19 @@ async function launchGame(profileId, opts = {}) {
         send('game:log', `[Diagnóstico] No se pudo revisar la carpeta de mods: ${e.message}`);
       }
     }
+    // Diagnóstico de autenticación: no registra tokens ni credenciales.
+    // En modo offline, el servidor debe aceptar explícitamente autenticación offline.
+    const launchAuthorization = session.mc.mclc();
+    send('game:log', `[Autenticación] Modo: ${session.offline ? 'OFFLINE (sin cuenta Microsoft)' : 'MICROSOFT'}`);
+    send('game:log', `[Autenticación] Perfil: ${launchAuthorization.name || '(sin nombre)'}`);
+    send('game:log', `[Autenticación] UUID: ${launchAuthorization.uuid || '(sin UUID)'}`);
+    send('game:log', `[Autenticación] Tipo: ${launchAuthorization.meta?.type || '(sin tipo)'}`);
+    if (session.offline && launchAuthorization.meta?.type !== 'mojang') {
+      throw new Error('La sesión offline de Nova está mal configurada: tipo de autenticación inesperado.');
+    }
+
     const launchOpts = {
-      authorization: session.mc.mclc(),
+      authorization: launchAuthorization,
       root: gameDir(),
       javaPath,
       version: customVersion ? { number: profile.mc, type, custom: customVersion } : { number: profile.mc, type },

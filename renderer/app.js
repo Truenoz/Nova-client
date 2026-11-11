@@ -286,19 +286,7 @@ async function doLogin() {
 
 els.loginBtns.forEach((b) => b.addEventListener('click', doLogin));
 
-// Permite entrar con un nombre local. En este modo solo funcionan mundos individuales
-// y servidores configurados para aceptar jugadores offline.
-$('btn-offline-login').addEventListener('click', async () => {
-  showError('');
-  const name = window.prompt('Elegí tu nombre de jugador (3 a 16 caracteres):');
-  if (name === null) return;
-  try {
-    renderAccount(await call(window.launcher.offlineLogin(name)));
-  } catch (e) {
-    showError(e.message || 'No se pudo iniciar en modo sin cuenta.');
-  }
-});
-
+// El inicio offline se conecta desde un manejador aislado al final de index.html.
 
 async function doLogout() {
   await call(window.launcher.logout());
