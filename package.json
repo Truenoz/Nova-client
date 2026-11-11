@@ -8,15 +8,16 @@
     "name": "Nova Client"
   },
   "license": "MIT",
-"scripts": {
-  "start": "electron .",
-  "build": "electron-builder --win nsis --publish never",
-  "build:portable": "electron-builder --win portable --publish never",
-  "dist": "electron-builder",
-  "server": "node server/server.js",
-  "test:server": "node server/test.js",
-  "publish:mods": "node scripts/publish-mods.js"
-},
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win nsis --publish never",
+    "build:portable": "electron-builder --win portable --publish never",
+    "dist": "electron-builder",
+    "build:mod": "node scripts/build-mod.js",
+    "server": "node server/server.js",
+    "test:server": "node server/test.js",
+    "publish:mods": "node scripts/publish-mods.js"
+  },
   "dependencies": {
     "adm-zip": "^0.5.16",
     "minecraft-launcher-core": "^3.18.2",
@@ -81,6 +82,15 @@
         "releaseType": "release"
       }
     ],
-    "copyright": "Copyright © Nova Client"
+    "copyright": "Copyright © Nova Client",
+    "extraResources": [
+      {
+        "from": "mod",
+        "to": "mod",
+        "filter": [
+          "nova-client-*.jar"
+        ]
+      }
+    ]
   }
 }
