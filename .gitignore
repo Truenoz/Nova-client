@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.log
+client-mod/.gradle/
+client-mod/build/
+mod/*.jar
+client-mod/.box-yarn/

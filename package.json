@@ -1,0 +1,85 @@
+{
+  "name": "nova-launcher",
+  "productName": "Nova Client",
+  "version": "1.1.0",
+  "description": "Launcher de Minecraft con login de Microsoft, selector de versiones, RAM configurable, Nova Client (HUD dentro del juego), Discord Rich Presence y actualizaciones automáticas.",
+  "main": "main.js",
+  "author": {
+    "name": "Nova Client"
+  },
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win nsis --publish never",
+    "build:portable": "electron-builder --win portable --publish never",
+    "dist": "electron-builder",
+    "server": "node server/server.js",
+    "test:server": "node server/test.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "minecraft-launcher-core": "^3.18.2",
+    "msmc": "^5.0.5",
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.novalauncher.app",
+    "productName": "Nova Client",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "discord.js",
+      "updates.js",
+      "profiles.js",
+      "modcompat.js",
+      "liveupdate.js",
+      "skins.js",
+      "util.js",
+      "modmanager.js",
+      "nova.config.json",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "language": "3082",
+      "license": "build/license.txt",
+      "installerSidebar": "build/installerSidebar.bmp",
+      "uninstallerSidebar": "build/uninstallerSidebar.bmp",
+      "installerHeader": "build/installerHeader.bmp",
+      "createDesktopShortcut": false,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": true,
+      "shortcutName": "Nova Client",
+      "include": "build/installer.nsh"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "releaseType": "release"
+      }
+    ],
+    "copyright": "Copyright © Nova Client"
+  }
+}

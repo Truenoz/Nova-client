@@ -1,0 +1,19 @@
+﻿Nova Client — Términos de uso (versión beta)
+
+1. Nova Client es un proyecto independiente. No está afiliado, respaldado ni patrocinado por Mojang AB, Microsoft ni ninguna de sus empresas. "Minecraft" es una marca registrada de Mojang AB.
+
+2. Nova Client no incluye archivos del juego. Al crear un perfil, el launcher descarga el juego desde los servidores públicos oficiales y lo instala en tu equipo. Necesitas una cuenta de Minecraft legítima para jugar.
+
+3. Esta es una versión beta: puede contener errores y cambiar sin aviso. Se ofrece "tal cual", sin garantías de ningún tipo. Haz copias de seguridad de tus mundos importantes.
+
+4. El launcher inicia sesión con tu cuenta de Microsoft a través de los servicios oficiales. Nova Client no ve ni guarda tu contraseña.
+
+5. El launcher se actualiza automáticamente: busca versiones nuevas del launcher y de los mods de Nova Client en GitHub y las instala cuando están disponibles.
+
+6. Si usas Nova Net (amigos y mensajes), se comparte tu nombre de jugador con el servidor para mostrar quién usa Nova Client y para gestionar tus amistades.
+
+7. Eres responsable del uso que hagas del software. No lo uses para infringir las normas de los servidores donde juegues ni los términos de servicio de Minecraft.
+
+8. Puedes desinstalar Nova Client en cualquier momento desde "Aplicaciones instaladas" de Windows. Tus mundos y archivos del juego no se borran al desinstalar.
+
+Al pulsar "Acepto" confirmas que has leído y aceptas estos términos.

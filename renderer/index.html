@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://mc-heads.net https://launchercontent.mojang.com https://cdn.modrinth.com; connect-src 'none'" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nova Client</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Pantalla de carga -->
+  <div id="boot" class="boot" aria-label="Cargando">
+    <img class="boot-icon" src="logo.png" alt="Nova Client" draggable="false" />
+    <div class="boot-spinner" role="progressbar" aria-label="Cargando"></div>
+  </div>
+
+  <!-- Barra de título -->
+  <div class="titlebar">
+    <div class="titlebar-brand">
+      <img src="logo.png" alt="" width="16" height="16" />
+      <span id="titlebar-name">Nova Client</span>
+    </div>
+    <button id="update-pill" class="update-pill hidden" type="button"></button>
+    <div class="titlebar-controls">
+      <button id="btn-palette" class="tb-btn" title="Apariencia" aria-label="Apariencia"><span id="ico-palette"></span></button>
+      <button id="btn-bell" class="tb-btn" title="Notificaciones" aria-label="Notificaciones">
+        <span id="ico-bell"></span><i id="bell-dot" class="bell-dot hidden"></i>
+      </button>
+      <button id="btn-min" class="tb-btn" title="Minimizar" aria-label="Minimizar">&#8211;</button>
+      <button id="btn-max" class="tb-btn" title="Maximizar" aria-label="Maximizar">
+        <svg id="ico-max" viewBox="0 0 12 12" width="11" height="11"><rect x="1.5" y="1.5" width="9" height="9" rx="1"/></svg>
+        <svg id="ico-restore" class="hidden" viewBox="0 0 12 12" width="11" height="11"><rect x="1.5" y="3.5" width="7" height="7" rx="1"/><path d="M3.5 3.5v-1a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-1"/></svg>
+      </button>
+      <button id="btn-close" class="tb-btn tb-close" title="Cerrar" aria-label="Cerrar">&#10005;</button>
+    </div>
+  </div>
+
+  <div class="shell">
+    <!-- Barra lateral de íconos -->
+    <aside class="rail">
+      <nav class="rail-nav" id="rail-nav"></nav>
+      <div class="rail-bottom">
+        <button id="rail-settings" class="rail-btn" title="Ajustes" aria-label="Ajustes"></button>
+        <button id="rail-play" class="rail-play" title="Jugar" aria-label="Jugar" disabled></button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <!-- ═══════════ INICIO ═══════════ -->
+      <section id="view-home" class="view active">
+        <div class="home">
+          <div class="col-main">
+            <div class="top-row">
+              <div class="brand-pill">
+                <img src="logo.png" alt="" width="34" height="34" />
+                <span>NOVA</span>
+              </div>
+
+              <div id="account-out" class="account-chip">
+                <button class="btn btn-accent js-login">Iniciar sesión con Microsoft</button>
+              </div>
+              <div id="account-in" class="account-chip hidden">
+                <img id="avatar" class="chip-avatar" alt="" width="32" height="32" />
+                <span id="account-name" class="chip-name">—</span>
+                <button id="btn-logout" class="btn btn-ghost btn-small">Salir</button>
+              </div>
+            </div>
+
+            <!-- Escena con el personaje -->
+            <div class="hero">
+              <div class="hero-bg" id="hero-bg-a"></div>
+              <div class="hero-bg" id="hero-bg-b"></div>
+              <div class="hero-shade"></div>
+              <div id="nametag" class="nametag">Sin sesión</div>
+              <canvas id="skin3d" class="skin3d dim hidden" aria-label="Tu personaje en 3D"></canvas>
+              <img id="skin" class="skin dim" alt="Tu personaje" />
+              <div class="hero-pill">
+                <span id="hero-pill-text">Conectá tu cuenta para jugar</span>
+                <button class="btn btn-accent btn-small js-login" id="hero-login">Iniciar sesión</button>
+              </div>
+            </div>
+
+            <div class="section-row">
+              <span class="section-title" id="recent-title"></span>
+              <span id="chip-java" class="tag tag-ok">Java ✓</span>
+              <span class="tag tag-off" title="Próximamente">Lecho de roca</span>
+            </div>
+
+            <div id="recent-list" class="recent-list"></div>
+
+            <div class="home-progress" id="home-progress">
+              <div class="progress-text" id="progress-text">Todo listo.</div>
+              <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+            </div>
+            <p id="play-error" class="error hidden" role="alert"></p>
+
+            <div class="bottom-bar">
+              <button id="btn-manage-profiles" class="btn btn-accent-soft"></button>
+              <button id="btn-add-mods" class="btn btn-dark"></button>
+              <div id="status-pill" class="status-pill">Ninguna instancia en ejecución</div>
+            </div>
+          </div>
+
+          <!-- Columna derecha -->
+          <aside class="col-side">
+            <div class="side-head">
+              <div class="side-title"><span class="dot"></span> Novedades de Minecraft</div>
+              <button id="btn-news-all" class="link-btn" type="button">Ver todo →</button>
+            </div>
+            <div id="news-list" class="news-list">
+              <div class="news-empty muted small">Cargando novedades…</div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-head">Tu instalación</div>
+              <div class="info-row"><span class="muted">Memoria</span><strong id="info-ram">—</strong></div>
+              <div class="info-row"><span class="muted">Java</span><strong id="info-java">Automático</strong></div>
+              <div class="info-row"><span class="muted">Perfiles</span><strong id="info-count">—</strong></div>
+              <button id="btn-go-settings" class="btn btn-dark btn-block">Cambiar ajustes</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ═══════════ PERFILES ═══════════ -->
+      <section id="view-profiles" class="view">
+        <div class="page-head">
+          <h2>Perfiles</h2>
+          <div class="page-actions">
+            <button id="btn-new-folder" class="btn btn-dark"></button>
+            <button id="btn-import" class="btn btn-dark"></button>
+            <button id="btn-new-profile" class="btn btn-green"></button>
+          </div>
+        </div>
+        <div class="toolbar">
+          <div id="profile-tabs" class="seg"></div>
+          <label class="search-box">
+            <span id="ico-search-profiles"></span>
+            <input id="profile-search" type="text" placeholder="Buscar perfiles" spellcheck="false" />
+          </label>
+        </div>
+        <div id="profile-groups"></div>
+      </section>
+
+      <!-- ═══════════ DETALLE DE PERFIL ═══════════ -->
+      <section id="view-detail" class="view"></section>
+
+      <!-- ═══════════ CONTENIDO (buscador global) ═══════════ -->
+      <section id="view-browse" class="view"></section>
+
+      <!-- ═══════════ SERVIDORES ═══════════ -->
+      <section id="view-servers" class="view"></section>
+
+      <!-- ═══════════ REGISTRO ═══════════ -->
+      <section id="view-console" class="view">
+        <div class="page-head">
+          <h2>Registro</h2>
+          <button id="btn-clear-log" class="btn btn-dark btn-small">Limpiar</button>
+        </div>
+        <pre id="log" class="log" tabindex="0"></pre>
+      </section>
+    </main>
+  </div>
+
+  <!-- Panel social (Charlas / Amigos) -->
+  <div id="social" class="social"></div>
+
+  <script src="boot.js"></script>
+  <script src="ui.js"></script>
+  <script src="skin3d.js"></script>
+  <script src="detail.js"></script>
+  <script src="mods.js"></script>
+  <script src="settings.js"></script>
+  <script src="social.js"></script>
+  <script src="bg-rotator.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
