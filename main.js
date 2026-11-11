@@ -4,6 +4,7 @@ const { app, BrowserWindow, ipcMain, shell, safeStorage, dialog, clipboard, Tray
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const crypto = require('crypto');
 const { Client } = require('minecraft-launcher-core');
 const { Auth } = require('msmc');
 const AdmZip = require('adm-zip');
@@ -121,7 +122,7 @@ function clearRefreshToken() {
 function accountInfo() {
   if (!session) return null;
   const p = session.mc.profile;
-  return { name: p?.name || 'Jugador', uuid: p?.id || '' };
+  return { name: p?.name || 'Jugador', uuid: p?.id || '', offline: !!session.offline };
 }
 
 // ───────────────────────── Cuenta Microsoft ─────────────────────────
@@ -149,6 +150,35 @@ async function tryRestoreSession() {
 async function login() {
   const xbox = await new Auth('select_account').launch('electron', { width: 520, height: 700 });
   return establishSession(xbox);
+}
+
+// Inicio de sesión sin cuenta: modo offline local de Minecraft.
+// No autentica cuentas ni permite entrar a servidores que exigen autenticación premium.
+function offlineUuid(name) {
+  const digest = crypto.createHash('md5').update(`OfflinePlayer:${name}`, 'utf8').digest();
+  digest[6] = (digest[6] & 0x0f) | 0x30;
+  digest[8] = (digest[8] & 0x3f) | 0x80;
+  const hex = digest.toString('hex');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+function loginOffline(rawName) {
+  const name = String(rawName || '').trim();
+  if (!/^[A-Za-z0-9_]{3,16}$/.test(name)) {
+    throw new Error('El nombre debe tener entre 3 y 16 caracteres: letras, números o guion bajo.');
+  }
+  const profile = { name, id: offlineUuid(name), skins: [] };
+  const authorization = {
+    access_token: '0',
+    client_token: '0',
+    uuid: profile.id.replace(/-/g, ''),
+    name,
+    user_properties: '{}',
+    meta: { type: 'mojang', demo: false }
+  };
+  session = { offline: true, mc: { profile, mclc: () => authorization } };
+  clearRefreshToken();
+  return accountInfo();
 }
 
 // ───────────────────────── Versiones ─────────────────────────
@@ -573,7 +603,7 @@ function supportsQuickPlay(mc) {
 
 async function launchGame(profileId, opts = {}) {
   if (currentGame) throw new Error('El juego ya está en ejecución.');
-  if (!session) throw new Error('Iniciá sesión con tu cuenta de Microsoft primero.');
+  if (!session) throw new Error('Iniciá sesión con Microsoft o elegí Jugar sin cuenta.');
 
   const profile = profiles.get(profileId);
   const settings = writeSettings({ lastProfile: profileId, lastVersion: profile.mc });
@@ -588,7 +618,7 @@ async function launchGame(profileId, opts = {}) {
     const javaPath = await ensureJava(major);
 
     // Refresca el token de Minecraft si está por vencer.
-    try { await session.mc.refresh(); } catch { /* si falla, se intenta con el actual */ }
+    if (!session.offline) { try { await session.mc.refresh(); } catch { /* si falla, se intenta con el actual */ } }
 
     const customVersion = await prepareProfile(profile, inst);
 
@@ -777,6 +807,7 @@ handle('shell:external', (url) => {
 
 handle('auth:restore', () => tryRestoreSession());
 handle('auth:login', () => login());
+handle('auth:offline', (name) => loginOffline(name));
 handle('auth:logout', () => {
   session = null;
   clearRefreshToken();
@@ -870,6 +901,7 @@ handle('skin:mine', (opts) => {
   if (!session) throw new Error('No hay sesión iniciada.');
   skins.init(path.join(app.getPath('userData'), 'skin-cache'));
   const p = session.mc.profile || {};
+  if (session.offline) return skins.getSkin(p.name, { force: !!opts?.force });
   const active = (p.skins || []).find((s) => s.state === 'ACTIVE') || (p.skins || [])[0];
   return skins.getSkin(p.id, {
     force: !!opts?.force,

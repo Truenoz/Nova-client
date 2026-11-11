@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('launcher', {
 
   restoreSession: () => invoke('auth:restore'),
   login: () => invoke('auth:login'),
+  offlineLogin: (name) => invoke('auth:offline', name),
   logout: () => invoke('auth:logout'),
 
   checkUpdates: () => invoke('update:check'),

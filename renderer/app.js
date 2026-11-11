@@ -258,7 +258,7 @@ function renderAccount(account) {
     els.avatar.onerror = () => { els.avatar.onerror = null; els.avatar.src = 'logo.png'; };
     els.avatar.src = `https://mc-heads.net/avatar/${id}/64`;
     els.nametag.textContent = account.name;
-    els.heroPillText.textContent = 'Sesión iniciada';
+    els.heroPillText.textContent = account.offline ? 'Sesión sin cuenta (offline)' : 'Sesión iniciada';
   } else {
     els.nametag.textContent = 'Sin sesión';
     els.heroPillText.textContent = 'Conectá tu cuenta para jugar';
@@ -285,6 +285,20 @@ async function doLogin() {
 }
 
 els.loginBtns.forEach((b) => b.addEventListener('click', doLogin));
+
+// Permite entrar con un nombre local. En este modo solo funcionan mundos individuales
+// y servidores configurados para aceptar jugadores offline.
+$('btn-offline-login').addEventListener('click', async () => {
+  showError('');
+  const name = window.prompt('Elegí tu nombre de jugador (3 a 16 caracteres):');
+  if (name === null) return;
+  try {
+    renderAccount(await call(window.launcher.offlineLogin(name)));
+  } catch (e) {
+    showError(e.message || 'No se pudo iniciar en modo sin cuenta.');
+  }
+});
+
 
 async function doLogout() {
   await call(window.launcher.logout());

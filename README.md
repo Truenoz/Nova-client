@@ -5,6 +5,7 @@ Launcher de Minecraft: Java Edition para Windows, hecho con Electron.
 ## Qué hace
 
 - Inicio de sesión con cuenta Microsoft (se recuerda la sesión, guardada cifrada con DPAPI).
+- **Modo sin cuenta (offline)**: permite elegir un nombre local para jugar en un jugador o en servidores que acepten autenticación offline. No valida cuentas, no da acceso a servidores premium y no permite suplantar cuentas.
 - Lista de versiones oficiales de Mojang (releases y, opcionalmente, snapshots), desde la 1.19 hasta las más nuevas.
 - Descarga el juego, librerías y recursos la primera vez.
 - Descarga e instala automáticamente el Java correcto para cada versión (Java 8, 17 o 21), sin que tengas que instalar nada.
